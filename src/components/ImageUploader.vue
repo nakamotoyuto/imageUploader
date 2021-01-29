@@ -9,7 +9,7 @@
         <div>
           <input type='file' id='dragAndDrop' class='form__dragAndDrop'>
           <label class='form__label' for='dragAndDrop'>
-            <svg-icon type='mdi' :path='state.path' :size="48"/>
+            <svg-icon type='mdi' :path='state.imageSizeSelectAcutual' :size="48"/>
             <p>Drag & Drop your image here</p>
           </label>
         </div>
@@ -24,14 +24,37 @@
       </div>
     </form>
   </div>
-  <div class='box'>
+  <div class='box--uploading'>
     <p class='uploadingTxt'>uploading</p>
+    <span class='uploadingBar'></span>
+  </div>
+  <div class='box--complete'>
+    <form class='complete'>
+      <div class='complete__box'>
+        <div>
+          <svg-icon class='complete__svg' type='mdi' :path='state.checkCircle' :size="35"/>
+          <h1 class='complete__title'>Uploaded Successfully!</h1>
+        </div>
+        <div>
+        </div>
+        <div>
+          <img src='https://via.placeholder.com//150x150' class='complete__img'>
+          <div class="complete__copyBox">
+            <input type='text' class='complete__readOnlyInput'>
+            <button class='complete__copyButton'>
+              Copy Link
+            </button>
+          </div>
+          <!-- <label for='dragAndDrop'> -->
+        </div>
+      </div>
+    </form>
   </div>
 </template>
 
 <script>
 import SvgIcon from '@jamescoyle/vue-icon'
-import { mdiImageSizeSelectActual } from '@mdi/js';
+import { mdiImageSizeSelectActual, mdiCheckCircle } from '@mdi/js';
 import { reactive} from "vue";
 export default {
   name: 'ImageUploader',
@@ -40,7 +63,8 @@ export default {
   },
   setup() {
     const state = reactive({
-      path: mdiImageSizeSelectActual
+      imageSizeSelectAcutual: mdiImageSizeSelectActual,
+      checkCircle: mdiCheckCircle
     });
     return{state}
   }
@@ -55,6 +79,15 @@ export default {
     border-radius: 12px;
     max-width:402px;
     height: 469px;
+  }
+
+  .box--uploading{
+    margin: auto;
+    padding: 36px 32px;
+    background-color: #ffffff;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    max-width:402px;
   }
 
   .form__title{
@@ -105,4 +138,78 @@ export default {
   .uploadingTxt{
     text-align: left;
   }
+
+  .uploadingBar{
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    background: #F2F2F2;
+    border-radius: 8px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .uploadingBar:after{
+    content:'';
+    position: absolute;
+    top: 0;
+    left: -100px;
+    width: 100px;
+    height: 100%;
+    background: #2F80ED;
+    border-radius: 8px;
+    animation-name: slide_bar;
+    animation-duration: 2s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+  }
+  @keyframes slide_bar {
+    100% {
+      left: 100%;
+    }
+}
+.box--complete{
+  margin: auto;
+  padding: 36px 32px;
+  background-color: #ffffff;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  max-width:402px;
+}
+.complete__title{
+  color: #4f4f4f;
+  font-size: 18px;
+}
+.complete__svg{
+  color: #219653;
+}
+.complete__img{
+  width: 100%;
+  max-height: 224.4px;
+}
+.complete__copyBox{
+  margin-top: 25px;
+  display: flex;
+  justify-content: space-between;
+  background: #F6F8FB;
+  border: 1px solid #E0E0E0;
+  box-sizing: border-box;
+  border-radius: 8px;
+}
+.complete__copyButton{
+  display: block;
+  width: 101px;
+  line-height: 31px;
+  background: #2F80ED;
+  border-radius: 8px;
+  font-size: 12px;
+  color: #ffffff;
+  cursor: pointer;
+  border: none;
+}
+
+.complete__readOnlyInput{
+  width: 100%;
+  border: none;
+  background-color: transparent;
+}
 </style>

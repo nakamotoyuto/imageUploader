@@ -1,5 +1,5 @@
 <template>
-  <div class='box'>
+  <div class='box' v-show="state.upload === 'form'">
     <form class='form'>
       <div class='form__box'>
         <div>
@@ -8,14 +8,14 @@
         </div>
         <div>
           <input type='file' id='dragAndDrop' class='form__dragAndDrop'>
-          <label class='form__label' for='dragAndDrop'>
+          <label class='form__label' for='dragAndDrop' @dragleave.prevent @dragover.prevent @drop.stop="onUpload">
             <svg-icon type='mdi' :path='state.imageSizeSelectAcutual' :size="48"/>
             <p>Drag & Drop your image here</p>
           </label>
         </div>
         <p>or</p>
         <div>
-          <input type='file' id='finderSelect' class='form__finderSelect'>
+          <input type='file' id='finderSelect' class='form__finderSelect' @change="onUpload">
           <label class='form__label--finderSelect' for='finderSelect'>
             Choose a file
           </label>
@@ -24,11 +24,11 @@
       </div>
     </form>
   </div>
-  <div class='box--uploading'>
+  <div class='box--uploading' v-show="state.upload === 'loading'">
     <p class='uploadingTxt'>uploading</p>
     <span class='uploadingBar'></span>
   </div>
-  <div class='box--complete'>
+  <div class='box--complete' v-show="state.upload === 'complete'">
     <form class='complete'>
       <div class='complete__box'>
         <div>
@@ -63,10 +63,36 @@ export default {
   },
   setup() {
     const state = reactive({
+      upload: 'form',
       imageSizeSelectAcutual: mdiImageSizeSelectActual,
       checkCircle: mdiCheckCircle
     });
-    return{state}
+    const onUpload = (event) => {
+      //選択ボタンを押した時はevent.target.files　　ドラッグアンドドロップの場合はevent.dataTransfer.files
+      const file = event.target.files ? event.target.files : event.dataTransfer.files;
+
+      let formData = new FormData;
+
+      formData.append('imagepath', file[0]);
+      state.upload = 'loading'
+      const param = {
+        method: "POST",
+        body: formData
+      }
+      fetch("https://example.com/receive.php", param)
+        .then((res)=>{
+          return( res.json() );
+        })
+        .then((json)=>{
+          state.upload = 'complete'
+          // 通信が成功した際の処理
+        })
+        .catch((error)=>{
+          // エラー処理
+          state.upload = 'form'
+        });
+  };
+    return{state,onUpload}
   }
 }
 </script>
